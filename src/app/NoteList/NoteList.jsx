@@ -1,3 +1,4 @@
+import React from 'react';
 import React from 'react'
 import styled, { createGlobalStyle, keyframes, css } from "styled-components";
 import myImage1 from '../img1.svg'
@@ -10,6 +11,8 @@ import SearchIcon from '@mui/icons-material/Search';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import BeenhereOutlinedIcon from '@mui/icons-material/BeenhereOutlined';
 import { purple } from '@mui/material/colors';
+import { Link } from '@mui/material';
+
 const color = purple[400]
 
 const BackGroundC = styled.div`
@@ -107,16 +110,22 @@ const Dh3 =styled.div`
 `
 const Dplus =styled.div`
    position: fixed;
-   left: 47%;
+   justify-content: center;
    bottom: 45px;
    
 `
+import {ImCancelCircle} from "react-icons/im";
+import {FiEdit} from "react-icons/fi";
+import { parseISO, formatDistanceToNow} from 'date-fns';
+import {Link} from "react-router-dom";
+import { removeNote } from '../../features/notes/noteSlice';
+import { useDispatch } from 'react-redux';
 
+const NotesList = ({notes}) => {
+  const dispatch = useDispatch();
 
-
-export  function Home() {
-  return (
-    <BackGroundC>
+  if(!notes || notes.length === 0){
+    return (<BackGroundC>
         <Image>
         <IMG  src={myImage1} alt="" />
         </Image>
@@ -134,25 +143,72 @@ Notes your first idea and start
             <Dh>
                 <HomeIcon color='secondary' fontSize='large'/>
             </Dh>
+            <Link href={'Finished'}>
             <Dh1>
                 <BeenhereOutlinedIcon color='secondary' fontSize='large'/>
             </Dh1>
-            <Dplus>
-                <Box  sx={{ '& > :not(style)': { m: 1 } }}>
+            </Link>
+            
+            <Link href={'NewNote'}>
+                <Dplus>
+                    <Box  sx={{ '& > :not(style)': { m: 1 } }}>
       
-                    <Fab color="secondary" aria-label="add">
-                        <AddIcon />
-                    </Fab>
-                </Box>
-            </Dplus>
+                        <Fab color="secondary" aria-label="add">
+                            <AddIcon />
+                        </Fab>
+                    </Box>
+                </Dplus>
+            </Link>
+            <Link href={'Search'}>
             <Dh2>
                 <SearchIcon color='secondary' fontSize='large'/>
             </Dh2>
+            </Link>
+            <Link href={'Setting'}>
             <Dh3>
                 <SettingsOutlinedIcon color='secondary' fontSize='large'/>
             </Dh3>
+            </Link>
+            
             
         </DIV>
-    </BackGroundC>
+    </BackGroundC>)
+  }
+
+  return (
+    <div className='notes'>
+      <h5 className='fs-18 fw-8 text-uppercase notes-title'>notes</h5>
+      <div className='notes-list grid'>
+        {
+          notes.map(note => {
+            return (
+              <div className='notes-item' key = {note.noteId}>
+                <div className='notes-item-title'>
+                  {note.noteTitle.substring(0, 80) + "..."}
+                </div>
+                <div className='notes-item-body'>
+                  {note.noteContent.substring(0, 150) + "..."}
+                </div>
+                <div className='notes-item-date text-capitalize'>{formatDistanceToNow(parseISO(note.noteDate))}</div>
+                <div className='notes-item-btns flex align-center justify-between'>
+                  <div>
+                    <button type = "button" className='notes-item-btn' onClick={() => dispatch(removeNote(note.noteId))}>
+                      <ImCancelCircle />
+                    </button>
+                    <Link to = {`/edit/${note.noteId}`} className = "notes-item-btn">
+                      <FiEdit />
+                    </Link>
+                  </div>
+
+                  <Link to = {`/note/${note.noteId}`} className='read-more-btn fs-14'>Read More</Link>
+                </div>
+              </div>
+            )
+          })
+        }
+      </div>
+    </div>
   )
 }
+
+export default NotesList

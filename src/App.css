@@ -1,9 +1,14 @@
 .App {
   text-align: center;
 }
+@font-face {
+  font-family: 'Inter';
+  src: url('./static/Inter-Regular.ttf');
+}
 
 body{
   background-color:#e9ecec;
+  font-family: 'inter';
 }
 
 .App-logo {
